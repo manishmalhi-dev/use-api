@@ -1,12 +1,10 @@
 import 'dart:convert';
-import 'package:fake_api_demo_app/api%20links/api_link.dart';
+import 'package:fake_api_demo_app/api%20links/api_key.dart';
 import 'package:fake_api_demo_app/pages/home%20page/home_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'category/laptops_category.dart';
-import 'category/phones_category.dart';
-import 'category/tablets_category.dart';
-import 'category/top_category.dart';
+import '../../api links/api_link.dart';
+import '../../model class/collection_get_data.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,18 +15,53 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  int index = 0;
-  List<Widget> listIs = [PhonesCategory(),LaptopsCategory(), TabletsCategory()];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
+  }
 
-  // Future<void> getData() async {
-  //   final response = await http.get(
-  //     Uri.parse(Collections.collection),
-  //     headers: {"x-api-key": Config.apiKey, "Content-Type": "application/json"},
-  //   );
-  //   final newResponse = jsonEncode(response.body);
-  //   print(newResponse);
-  //   print(response.statusCode);
-  // }
+
+  int colorIndex =0;
+  List<String> name = ["phone", "laptop", "tablet"];
+  String categoryName = "phone";
+
+  List<CollectionGetData> dataIs =[];
+
+  Future<void> getData() async {
+    try{
+      final response = await http.get(
+        Uri.parse(AddCollection.Login(categoryName)),
+        headers: {"x-api-key": ApiLink.link, "Content-Type": "application/json"},
+      );
+      List newResponse = jsonDecode(response.body);
+
+      print("----------response is this ------------");
+      print(response.body);
+      print(response.statusCode);
+      setState(() {
+        dataIs = newResponse.map((iteam)=> CollectionGetData.fromJson(iteam)).toList();
+      });
+
+    }catch(e){
+      print(e);
+    }
+  }
+
+  // bool result = false;
+
+  void floatingButton() async{
+   final result = await showModalBottomSheet(
+        isScrollControlled:true,
+        context: context,
+        builder: (context){
+          return HomeBottomSheet();
+    });
+   if(result==true){
+     getData();
+   }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,38 +69,85 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
           title: Text("home Page"),
           backgroundColor: Colors.yellow
-      // actions: [IconButton(onPressed: (){}, icon: Icon(Icons.home))],
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TopCategory(
-              onNameSelected: (name) {
+          Text(categoryName),
+
+      SizedBox(
+        height: 40,
+        child: ListView.separated(
+          separatorBuilder: (context, index) {
+            return SizedBox(width: 30);
+          },
+          scrollDirection: Axis.horizontal,
+          itemCount: name.length,
+          itemBuilder: (context, index) {
+            return ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: colorIndex==index?Colors.yellow :null,
+              ),
+              onPressed: () {
                 setState(() {
-                  index = name;
+                  colorIndex = index;
+                  categoryName = name[index];
+                  getData();
                 });
+              },
+              child: Text(name[index]),
+            );
+          },
+        ),
+      ),
+          SizedBox(height: 20,),
+
+          Expanded(
+            child: GridView.builder(
+              itemCount: dataIs.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+              itemBuilder: (context, index) {
+                final item = dataIs[index];
+                return Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CustomeWidget("Id", item.id),
+                        CustomeWidget("name", item.name),
+                        CustomeWidget("year", item.modelData.year),
+                        CustomeWidget("price", item.modelData.price),
+                      ],
+                    ),
+                  ),
+                );
               },
             ),
           ),
-          SizedBox(height: 50,),
-          Container(
-            child: listIs[index],
-          ),
+
+
         ],
       ),
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: (){
-            showModalBottomSheet(isScrollControlled:true, context: context, builder: (context){
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: HomeBottomSheet()
-              );
-            });
+            floatingButton();
           }),
     );
   }
 }
 
 
+Widget CustomeWidget(String name , String Item){
+  return Row(
+    spacing: 20,
+    children: [
+      Text("$name : ",style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.bold),),
+      Expanded(child: Text(Item,style: TextStyle(fontWeight: FontWeight.w400),)),
+    ],
+  );
+}

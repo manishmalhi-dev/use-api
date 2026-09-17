@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:fake_api_demo_app/api%20links/api_key.dart';
+import 'package:fake_api_demo_app/api%20links/api_link.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart'as http;
 
@@ -16,7 +18,9 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
   TextEditingController price = TextEditingController();
   TextEditingController year = TextEditingController();
 
-  String collectionsName = "Laptop";
+  String collectionsName = "laptop";
+
+  final formKey = GlobalKey<FormState>();
 
   Future<void> postData()async{
     String finalName = name.text.trim();
@@ -24,23 +28,30 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
     String finalYear = year.text.trim();
 
     try{
-      String finalLink = "https://api.restful-api.dev/collections/${collectionsName.toLowerCase()}/objects";
-      final response = await http.post(Uri.parse(finalLink),
+      setState(() {
+        isLoading = true;
+      });
+      final response = await http.post(Uri.parse(AddCollection.Login(collectionsName)),
           body: jsonEncode({
             "name":finalName,
-            "price" : finalPrice,
-            "year" : finalYear,
+            "data":{
+              "year" : finalYear,
+              "price" : finalPrice,
+            }
           }),
           headers: {
             "Content-Type":"application/json",
-            "x-api-key" : "f1acc627-be6b-46ed-be1d-b73583d3de56",
+            "x-api-key" : ApiLink.link,
           }
       );
+      setState(() {
+        isLoading = false;
+      });
       if(response.statusCode==200||response.statusCode==201){
         name.clear();
         price.clear();
         year.clear();
-        Navigator.pop(context);
+        Navigator.pop(context, true);
         print(response.statusCode);
         print("response is-- ");
         print(response.body);
@@ -53,149 +64,173 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
       print(e);
     }
   }
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(collectionsName),
-          SizedBox(
-            width: 40,
-            child: Divider(
-              thickness: 4,
-              color: Colors.grey.shade400,
-              radius: BorderRadius.circular(10),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return SizedBox(
+      height: MediaQuery.of(context).size.height/1.6,
+      width: double.infinity,
+      child: isLoading==true? Center(child: CircularProgressIndicator()):SingleChildScrollView(
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 40,
+                child: Divider(
+                  thickness: 4,
+                  color: Colors.grey.shade400,
+                  radius: BorderRadius.circular(10),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
                   children: [
-                    Text(
-                      "Add Categories",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Add Categories",
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(Icons.close, size: 26),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        "Collections",
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                       ),
                     ),
-                    IconButton(
+                    CollectionButtons(backData:(String value){
+                      setState(() {
+                        collectionsName = value;
+                      });
+                    },),
+
+                    SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        "Name",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                    TextFormField(
+                      controller: name,
+                      validator: ((value) {
+                        if(value==null||value!.isEmpty){
+                          return "please enter name";
+                        }
+                      }),
+                      decoration: InputDecoration(
+                        hintText: "Product name ",
+                        prefixIcon: Icon(Icons.note_add_sharp),
+                        suffixIcon: IconButton(onPressed: (){
+                        }, icon: Icon(Icons.close)),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey, width: 2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        "Price",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                    TextFormField(
+                      controller: price,
+                      validator: ((value) {
+                        if(value==null||value!.isEmpty){
+                          return "please enter price";
+                        }
+                      }),
+                      decoration: InputDecoration(
+                        hintText: "Product price ",
+                        prefixIcon: Icon(Icons.note_add_sharp),
+                        suffixIcon: IconButton(onPressed: (){
+                        }, icon: Icon(Icons.close)),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey, width: 2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        "Year",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    TextFormField(
+                      controller: year,
+                      validator: ((value) {
+                        if(value==null||value!.isEmpty){
+                          return "please enter year";
+                        }
+                      }),
+                      decoration: InputDecoration(
+                        hintText: "Product year ",
+                        prefixIcon: Icon(Icons.note_add_sharp),
+                        suffixIcon: IconButton(onPressed: (){
+                        }, icon: Icon(Icons.close)),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey, width: 2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+
+                    SizedBox(
+                      width: double.infinity,
+                      height: 40,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          if(formKey.currentState!.validate()){
+                            postData();
+                          }
+                        },
+                        label: Text("Add collection"),
+                        icon: Icon(Icons.task),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    TextButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      icon: Icon(Icons.close, size: 26),
+                      child: Text("Cancel"),
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    "Collections",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                  ),
-                ),
-                CollectionButtons(backData:(String value){
-                  setState(() {
-                    collectionsName = value;
-                  });
-                },),
-
-                SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    "Name",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-                TextField(
-                  controller: name,
-                  decoration: InputDecoration(
-                    hintText: "Product name ",
-                    prefixIcon: Icon(Icons.note_add_sharp),
-                    suffixIcon: IconButton(onPressed: (){
-                    }, icon: Icon(Icons.close)),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 2),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10,),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    "Price",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-                TextField(
-                  controller: price,
-                  decoration: InputDecoration(
-                    hintText: "Product price ",
-                    prefixIcon: Icon(Icons.note_add_sharp),
-                    suffixIcon: IconButton(onPressed: (){
-                    }, icon: Icon(Icons.close)),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 2),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10,),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    "Year",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-                TextField(
-                  controller: year,
-                  decoration: InputDecoration(
-                    hintText: "Product year ",
-                    prefixIcon: Icon(Icons.note_add_sharp),
-                    suffixIcon: IconButton(onPressed: (){
-                    }, icon: Icon(Icons.close)),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 2),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10,),
-
-                SizedBox(
-                  width: double.infinity,
-                  height: 40,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      postData();
-                    },
-                    label: Text("Add collection"),
-                    icon: Icon(Icons.task),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text("Cancel"),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -214,7 +249,7 @@ class CollectionButtons extends StatefulWidget {
 
 class _CollectionButtonsState extends State<CollectionButtons> {
 
-  List<String> collectionName = ["Laptop", "Phones", "Tablets"];
+  List<String> collectionName = ["laptop", "phone", "tablet"];
   int buttonColor = 0;
 
   @override

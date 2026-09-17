@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:fake_api_demo_app/api%20links/api_key.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
@@ -24,15 +25,12 @@ class _LoginPageState extends State<LoginPage> {
       final response = await http.post(
         Uri.parse(LoginApi.Login),
         headers: {
-          "x-api-key": "f1acc627-be6b-46ed-be1d-b73583d3de56",
+          "x-api-key": ApiLink.link,
           "Content-Type": "application/json",
         },
         body: jsonEncode({"email": email, "password": password}),
       );
-      print(response.body);
-      print(response.statusCode);
       if (response.statusCode == 200) {
-        print(response.body);
         context.push('/HomePage');
       }
     } catch (e) {

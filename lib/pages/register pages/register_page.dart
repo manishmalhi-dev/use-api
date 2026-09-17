@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:fake_api_demo_app/api%20links/api_key.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart'as http;
@@ -34,7 +35,7 @@ class _RegisterPageState extends State<RegisterPage> {
             "name": nameIs,
           }),
           headers: {
-            "x-api-key": Config.apiKey,
+            "x-api-key": ApiLink.link,
             "Content-Type": "application/json",
           }
       );

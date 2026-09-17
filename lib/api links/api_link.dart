@@ -1,8 +1,4 @@
 
-class Config {
-  static  const apiKey = "f1acc627-be6b-46ed-be1d-b73583d3de56";
-}
-
 class RegisterLink {
   static const register = "https://api.restful-api.dev/register";
   // static const
@@ -17,6 +13,13 @@ class Collections {
 class LoginApi{
   static const Login = "https://api.restful-api.dev/login";
 }
+
+class AddCollection{
+  static String Login(String name){
+    return "https://api.restful-api.dev/collections/${name.toLowerCase()}/objects";
+  }
+}
+
 
 
 
