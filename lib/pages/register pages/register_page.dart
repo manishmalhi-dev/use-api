@@ -72,6 +72,7 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
               spacing: 20,
               children: [
+                SizedBox(height: 20,),
                 Align(
                     alignment: Alignment.topRight,
                     child: IconButton(onPressed: (){

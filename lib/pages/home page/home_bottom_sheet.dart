@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart'as http;
 
 class HomeBottomSheet extends StatefulWidget {
   const HomeBottomSheet({super.key});
@@ -9,7 +12,47 @@ class HomeBottomSheet extends StatefulWidget {
 
 class _HomeBottomSheetState extends State<HomeBottomSheet> {
 
+  TextEditingController name = TextEditingController();
+  TextEditingController price = TextEditingController();
+  TextEditingController year = TextEditingController();
+
   String collectionsName = "Laptop";
+
+  Future<void> postData()async{
+    String finalName = name.text.trim();
+    String finalPrice = price.text.trim();
+    String finalYear = year.text.trim();
+
+    try{
+      String finalLink = "https://api.restful-api.dev/collections/${collectionsName.toLowerCase()}/objects";
+      final response = await http.post(Uri.parse(finalLink),
+          body: jsonEncode({
+            "name":finalName,
+            "price" : finalPrice,
+            "year" : finalYear,
+          }),
+          headers: {
+            "Content-Type":"application/json",
+            "x-api-key" : "f1acc627-be6b-46ed-be1d-b73583d3de56",
+          }
+      );
+      if(response.statusCode==200||response.statusCode==201){
+        name.clear();
+        price.clear();
+        year.clear();
+        Navigator.pop(context);
+        print(response.statusCode);
+        print("response is-- ");
+        print(response.body);
+      }
+      else {
+        print("data can't be post in api ");
+      }
+
+    }catch(e){
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +114,7 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
                   ),
                 ),
                 TextField(
+                  controller: name,
                   decoration: InputDecoration(
                     hintText: "Product name ",
                     prefixIcon: Icon(Icons.note_add_sharp),
@@ -91,6 +135,7 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
                   ),
                 ),
                 TextField(
+                  controller: price,
                   decoration: InputDecoration(
                     hintText: "Product price ",
                     prefixIcon: Icon(Icons.note_add_sharp),
@@ -111,6 +156,7 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
                   ),
                 ),
                 TextField(
+                  controller: year,
                   decoration: InputDecoration(
                     hintText: "Product year ",
                     prefixIcon: Icon(Icons.note_add_sharp),
@@ -129,6 +175,7 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
                   height: 40,
                   child: ElevatedButton.icon(
                     onPressed: () {
+                      postData();
                     },
                     label: Text("Add collection"),
                     icon: Icon(Icons.task),
