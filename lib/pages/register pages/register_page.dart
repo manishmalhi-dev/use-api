@@ -20,7 +20,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
 
 
-
+bool isLoading = false;
   Future<void> postUserDetail()async{
     final pref = await SharedPreferences.getInstance();
 
@@ -28,6 +28,9 @@ class _RegisterPageState extends State<RegisterPage> {
     String emailIs = userEmail.text.trim();
     String passwordIs = userPassword.text.trim();
 
+    setState(() {
+      isLoading =true;
+    });
 
     try{
       final response = await http.post(
@@ -45,18 +48,41 @@ class _RegisterPageState extends State<RegisterPage> {
       );
       if(response.statusCode==200||response.statusCode==201){
         await pref.setBool("userLogin", true);
+        setState(() {
+          isLoading =false;
+        });
         context.go('/HomePage');
       }
 
       else{
-
+        setState(() {
+          isLoading =false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text("user can be already exists"),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.only(
+              bottom: MediaQuery.of(context).size.height - 100,
+              left: 20,
+              right: 20,
+            ),
+          ),
+        );
       }
     }catch(e){
+      setState(() {
+        isLoading =false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Error"),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 3),
+          content: const Text("internet problem"),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height - 100,
+            left: 20,
+            right: 20,
+          ),
         ),
       );
     }
@@ -71,7 +97,7 @@ class _RegisterPageState extends State<RegisterPage> {
           key: _formKey,
           child: Padding(
             padding: const EdgeInsets.all(15.0),
-            child: Column(
+            child: isLoading==true?Center(child: CircularProgressIndicator(),):Column(
               mainAxisAlignment: MainAxisAlignment.center,
               spacing: 20,
               children: [

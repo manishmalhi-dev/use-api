@@ -17,20 +17,22 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getData();
   }
 
-  int selected =0;
-
+  // int selected =0;
   int colorIndex =0;
-  List<String> name = ["phone", "laptop", "tablet"];
-  String categoryName = "phone";
+  bool isLoading = false;
 
+  List<String> name = ["laptop", "phone", "tablet"];
+  String categoryName = "laptop";
   List<CollectionGetData> dataIs =[];
 
   Future<void> getData() async {
+    setState(() {
+      isLoading = true;
+    });
     try{
       final response = await http.get(
         Uri.parse(AddCollection.Login(categoryName)),
@@ -40,7 +42,9 @@ class _HomeWidgetState extends State<HomeWidget> {
 
       setState(() {
         dataIs = newResponse.map((item)=> CollectionGetData.fromJson(item)).toList();
+        isLoading = false;
       });
+
 
     }catch(e){
       print(e);
@@ -77,6 +81,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                 itemBuilder: (context, index) {
                   return ElevatedButton(
                     style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       backgroundColor: colorIndex==index?Colors.yellow :null,
                       foregroundColor: colorIndex==index?Colors.black :null,
                     ),
@@ -95,7 +100,7 @@ class _HomeWidgetState extends State<HomeWidget> {
           ),
           SizedBox(height: 20,),
 
-          Expanded(
+          isLoading==true?Expanded(child: Center(child: CircularProgressIndicator(),)):Expanded(
             child: GridView.builder(
               itemCount: dataIs.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -121,8 +126,6 @@ class _HomeWidgetState extends State<HomeWidget> {
               },
             ),
           ),
-
-
         ],
       ),
       floatingActionButton: FloatingActionButton(

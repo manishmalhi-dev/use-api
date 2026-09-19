@@ -9,7 +9,7 @@ final GoRouter router = GoRouter(
 
    routes: [
      GoRoute(path: '/FlashScreen', builder: (context, state)=>FlashScreen()),
-      GoRoute(path: '/RegisterPage',builder: (context, state)=> RegisterPage()),
+      GoRoute(path: '/RegisterPage',name : 'RegisterPage' ,builder: (context, state)=> RegisterPage()),
       GoRoute(path: '/LoginPage', name : 'LoginPage', builder: (context, state)=> LoginPage()),
       GoRoute(path: '/HomePage',builder: (context, state)=> HomePage()),
    ]

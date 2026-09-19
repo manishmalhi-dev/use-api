@@ -18,8 +18,11 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController enterPassword = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-
+bool isLoading = false;
   Future<void> userLogin() async {
+    setState(() {
+      isLoading = true;
+    });
     final pref = await SharedPreferences.getInstance();
     String email = enteredEmail.text.trim();
     String password = enterPassword.text.trim();
@@ -34,7 +37,26 @@ class _LoginPageState extends State<LoginPage> {
       );
       if (response.statusCode == 200) {
         await pref.setBool("userLogin", true);
+        setState(() {
+          isLoading = false;
+        });
         context.go('/HomePage');
+      }
+      else{
+        setState(() {
+          isLoading=false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text("Wrong email or password"),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.only(
+              bottom: MediaQuery.of(context).size.height - 100,
+              left: 20,
+              right: 20,
+            ),
+          ),
+        );
       }
     } catch (e) {
       print(e);
@@ -49,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
           key: _formKey,
           child: Padding(
             padding: const EdgeInsets.all(15.0),
-            child: Column(
+            child: isLoading==true? Center(child: CircularProgressIndicator(),):Column(
               spacing: 30,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -136,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        context.pushReplacementNamed('RegisterPage');
                       },
                       child: Text("SignUp"),
                     ),
