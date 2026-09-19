@@ -52,12 +52,9 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
         price.clear();
         year.clear();
         Navigator.pop(context, true);
-        print(response.statusCode);
-        print("response is-- ");
-        print(response.body);
       }
       else {
-        print("data can't be post in api ");
+
       }
 
     }catch(e){
@@ -68,168 +65,164 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height/1.6,
-      width: double.infinity,
-      child: isLoading==true? Center(child: CircularProgressIndicator()):SingleChildScrollView(
-        child: Form(
-          key: formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                width: 40,
-                child: Divider(
-                  thickness: 4,
-                  color: Colors.grey.shade400,
-                  radius: BorderRadius.circular(10),
-                ),
+    return isLoading==true? Center(child: CircularProgressIndicator()):SingleChildScrollView(
+      child: Form(
+        key: formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 40,
+              child: Divider(
+                thickness: 4,
+                color: Colors.grey.shade400,
+                radius: BorderRadius.circular(10),
               ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Add Categories",
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: Icon(Icons.close, size: 26),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        "Collections",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    CollectionButtons(backData:(String value){
-                      setState(() {
-                        collectionsName = value;
-                      });
-                    },),
-
-                    SizedBox(height: 10),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        "Name",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                    TextFormField(
-                      controller: name,
-                      validator: ((value) {
-                        if(value==null||value!.isEmpty){
-                          return "please enter name";
-                        }
-                      }),
-                      decoration: InputDecoration(
-                        hintText: "Product name ",
-                        prefixIcon: Icon(Icons.note_add_sharp),
-                        suffixIcon: IconButton(onPressed: (){
-                        }, icon: Icon(Icons.close)),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey, width: 2),
-                          borderRadius: BorderRadius.circular(12),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Add Categories",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    SizedBox(height: 10,),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        "Price",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                    TextFormField(
-                      controller: price,
-                      validator: ((value) {
-                        if(value==null||value!.isEmpty){
-                          return "please enter price";
-                        }
-                      }),
-                      decoration: InputDecoration(
-                        hintText: "Product price ",
-                        prefixIcon: Icon(Icons.note_add_sharp),
-                        suffixIcon: IconButton(onPressed: (){
-                        }, icon: Icon(Icons.close)),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey, width: 2),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10,),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        "Year",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                    TextFormField(
-                      controller: year,
-                      validator: ((value) {
-                        if(value==null||value!.isEmpty){
-                          return "please enter year";
-                        }
-                      }),
-                      decoration: InputDecoration(
-                        hintText: "Product year ",
-                        prefixIcon: Icon(Icons.note_add_sharp),
-                        suffixIcon: IconButton(onPressed: (){
-                        }, icon: Icon(Icons.close)),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey, width: 2),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10,),
-
-                    SizedBox(
-                      width: double.infinity,
-                      height: 40,
-                      child: ElevatedButton.icon(
+                      IconButton(
                         onPressed: () {
-                          if(formKey.currentState!.validate()){
-                            postData();
-                          }
+                          Navigator.pop(context);
                         },
-                        label: Text("Add collection"),
-                        icon: Icon(Icons.task),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                        ),
+                        icon: Icon(Icons.close, size: 26),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      "Collections",
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  CollectionButtons(backData:(String value){
+                    setState(() {
+                      collectionsName = value;
+                    });
+                  },),
+
+                  SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      "Name",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  TextFormField(
+                    controller: name,
+                    validator: ((value) {
+                      if(value==null||value.isEmpty){
+                        return "please enter name";
+                      }return null;
+                    }),
+                    decoration: InputDecoration(
+                      hintText: "Product name ",
+                      prefixIcon: Icon(Icons.note_add_sharp),
+                      suffixIcon: IconButton(onPressed: (){
+                      }, icon: Icon(Icons.close)),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey, width: 2),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    SizedBox(height: 10),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text("Cancel"),
+                  ),
+                  SizedBox(height: 10,),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      "Price",
+                      style: TextStyle(fontSize: 16),
                     ),
-                  ],
-                ),
+                  ),
+                  TextFormField(
+                    controller: price,
+                    validator: ((value) {
+                      if(value==null||value.isEmpty){
+                        return "please enter price";
+                      }return null;
+                    }),
+                    decoration: InputDecoration(
+                      hintText: "Product price ",
+                      prefixIcon: Icon(Icons.note_add_sharp),
+                      suffixIcon: IconButton(onPressed: (){
+                      }, icon: Icon(Icons.close)),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey, width: 2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10,),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      "Year",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
+                  TextFormField(
+                    controller: year,
+                    validator: ((value) {
+                      if(value==null||value.isEmpty){
+                        return "please enter year";
+                      }return  null;
+                    }),
+                    decoration: InputDecoration(
+                      hintText: "Product year ",
+                      prefixIcon: Icon(Icons.note_add_sharp),
+                      suffixIcon: IconButton(onPressed: (){
+                      }, icon: Icon(Icons.close)),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey, width: 2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10,),
+
+                  SizedBox(
+                    width: double.infinity,
+                    height: 40,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        if(formKey.currentState!.validate()){
+                          postData();
+                        }
+                      },
+                      label: Text("Add collection"),
+                      icon: Icon(Icons.task),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("Cancel"),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

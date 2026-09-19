@@ -4,7 +4,6 @@ class RegisterLink {
   // static const
 }
 
-
 class Collections {
   static const collection = "https://api.restful-api.dev/collections";
 // static const

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart'as http;
 import '../../api links/api_link.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -19,7 +20,10 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
 
 
+
   Future<void> postUserDetail()async{
+    final pref = await SharedPreferences.getInstance();
+
     String nameIs = userName.text.trim();
     String emailIs = userEmail.text.trim();
     String passwordIs = userPassword.text.trim();
@@ -27,7 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
     try{
       final response = await http.post(
-          Uri.parse("${RegisterLink.register}"),
+          Uri.parse(RegisterLink.register),
 
           body: jsonEncode({
             "email" : emailIs,
@@ -39,16 +43,13 @@ class _RegisterPageState extends State<RegisterPage> {
             "Content-Type": "application/json",
           }
       );
-      print("-------------${response.statusCode} -----------");
       if(response.statusCode==200||response.statusCode==201){
-        print("account is create successfully ");
+        await pref.setBool("userLogin", true);
         context.go('/HomePage');
       }
-      else if(response.statusCode==409){
-        print("user already existed");
-      }
+
       else{
-        print("account can't be create successfully ");
+
       }
     }catch(e){
       ScaffoldMessenger.of(context).showSnackBar(
@@ -71,15 +72,9 @@ class _RegisterPageState extends State<RegisterPage> {
           child: Padding(
             padding: const EdgeInsets.all(15.0),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               spacing: 20,
               children: [
-                SizedBox(height: 20,),
-                Align(
-                    alignment: Alignment.topRight,
-                    child: IconButton(onPressed: (){
-                      context.push('/HomePage');
-                    }, icon:Icon(Icons.close))),
-                SizedBox(height: 70,),
                 Text(
                   "Welcome Brother",
                   style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
@@ -96,7 +91,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   validator: (value){
                     if(value== null||value.isEmpty){
                       return 'Enter Name';
-                    }else null;
+                    }return null;
                   },
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -121,7 +116,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   validator: (value){
                     if(value== null||value.isEmpty){
                       return "Please enter Email";
-                    }else null;
+                    }return null;
                   },
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -146,7 +141,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   validator: (value){
                     if(value== null||value.isEmpty){
                       return 'Please enter password';
-                    }else null ;
+                    }return null ;
                   },
                   decoration: InputDecoration(
                     border: OutlineInputBorder(

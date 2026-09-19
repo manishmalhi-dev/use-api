@@ -3,6 +3,7 @@ import 'package:fake_api_demo_app/api%20links/api_key.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../api links/api_link.dart';
 
 class LoginPage extends StatefulWidget {
@@ -19,6 +20,7 @@ class _LoginPageState extends State<LoginPage> {
 
 
   Future<void> userLogin() async {
+    final pref = await SharedPreferences.getInstance();
     String email = enteredEmail.text.trim();
     String password = enterPassword.text.trim();
     try {
@@ -31,7 +33,8 @@ class _LoginPageState extends State<LoginPage> {
         body: jsonEncode({"email": email, "password": password}),
       );
       if (response.statusCode == 200) {
-        context.push('/HomePage');
+        await pref.setBool("userLogin", true);
+        context.go('/HomePage');
       }
     } catch (e) {
       print(e);
@@ -48,8 +51,8 @@ class _LoginPageState extends State<LoginPage> {
             padding: const EdgeInsets.all(15.0),
             child: Column(
               spacing: 30,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 80),
                 Text(
                   "Welcome Back",
                   style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
@@ -66,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Please enter Email";
-                    } else null;
+                    } return null;
                   },
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -91,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter password';
-                    } else null;
+                    } return null;
                   },
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
