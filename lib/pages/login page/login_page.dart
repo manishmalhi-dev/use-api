@@ -28,7 +28,7 @@ bool isLoading = false;
     String password = enterPassword.text.trim();
     try {
       final response = await http.post(
-        Uri.parse(LoginApi.Login),
+        Uri.parse(LoginApi.LoginUrl),
         headers: {
           "x-api-key": ApiLink.link,
           "Content-Type": "application/json",
@@ -65,106 +65,111 @@ bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: isLoading==true? Center(child: CircularProgressIndicator(),):Column(
-              spacing: 30,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Welcome Back",
-                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    "Login Page",
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500),
+    return GestureDetector(
+      onTap: (){
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        body: Center(
+          child: Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: isLoading==true? Center(child: CircularProgressIndicator(),):Column(
+                spacing: 30,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Welcome Back",
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                   ),
-                ),
-                TextFormField(
-                  controller: enteredEmail,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Please enter Email";
-                    } return null;
-                  },
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(color: Colors.grey, width: 1),
-                    ),
-                    prefixIcon: Icon(Icons.email),
-                    hintText: "Enter Email",
-                    label: Text("Enter Email"),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          enteredEmail.clear();
-                        });
-                      },
-                      icon: Icon(Icons.close),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      "Login Page",
+                      style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500),
                     ),
                   ),
-                ),
-                TextFormField(
-                  controller: enterPassword,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter password';
-                    } return null;
-                  },
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(color: Colors.grey, width: 1),
-                    ),
-                    prefixIcon: Icon(Icons.password),
-                    hintText: "enter Your Password",
-                    label: Text("Enter Password"),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          enterPassword.clear();
-                        });
-                      },
-                      icon: Icon(Icons.close),
-                    ),
-                  ),
-                ),
-                Column(
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.yellow,
-                        minimumSize: Size(300, 50),
+                  TextFormField(
+                    controller: enteredEmail,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter Email";
+                      } return null;
+                    },
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(color: Colors.grey, width: 1),
                       ),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          userLogin();
-                        }
-                      },
-                      child: Text(
-                        "Login",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                      prefixIcon: Icon(Icons.email),
+                      hintText: "Enter Email",
+                      label: Text("Enter Email"),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            enteredEmail.clear();
+                          });
+                        },
+                        icon: Icon(Icons.close),
+                      ),
+                    ),
+                  ),
+                  TextFormField(
+                    controller: enterPassword,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter password';
+                      } return null;
+                    },
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(color: Colors.grey, width: 1),
+                      ),
+                      prefixIcon: Icon(Icons.password),
+                      hintText: "enter Your Password",
+                      label: Text("Enter Password"),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            enterPassword.clear();
+                          });
+                        },
+                        icon: Icon(Icons.close),
+                      ),
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.yellow,
+                          minimumSize: Size(300, 50),
+                        ),
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            userLogin();
+                          }
+                        },
+                        child: Text(
+                          "Login",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        context.pushReplacementNamed('RegisterPage');
-                      },
-                      child: Text("SignUp"),
-                    ),
-                  ],
-                ),
-              ],
+                      TextButton(
+                        onPressed: () {
+                          context.go('/RegisterPage');
+                        },
+                        child: Text("SignUp"),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -54,7 +54,6 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
         Navigator.pop(context, true);
       }
       else {
-
       }
 
     }catch(e){

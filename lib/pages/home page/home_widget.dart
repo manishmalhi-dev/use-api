@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:fake_api_demo_app/pages/home%20page/get_single_item.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import '../../api links/api_key.dart';
 import '../../api links/api_link.dart';
@@ -21,13 +23,32 @@ class _HomeWidgetState extends State<HomeWidget> {
     getData();
   }
 
-  // int selected =0;
   int colorIndex =0;
   bool isLoading = false;
-
   List<String> name = ["laptop", "phone", "tablet"];
   String categoryName = "laptop";
   List<CollectionGetData> dataIs =[];
+
+
+  Future<void> deleteData(String id, String obj)async{
+    try{
+      final link =DeletePost.DltUrl(obj, id);
+      final response = await http.delete(Uri.parse(link),
+        headers: {
+          "x-api-key": ApiLink.link,
+          "Content-Type": "application/json",
+        },
+      );
+      if(response.statusCode==200){
+        print("data can be delete successfully");
+        getData();
+      }
+    }catch(e){
+      print(e);
+    }
+
+  }
+
 
   Future<void> getData() async {
     setState(() {
@@ -101,25 +122,42 @@ class _HomeWidgetState extends State<HomeWidget> {
           SizedBox(height: 20,),
 
           isLoading==true?Expanded(child: Center(child: CircularProgressIndicator(),)):Expanded(
-            child: GridView.builder(
+            child: ListView.builder(
               itemCount: dataIs.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
               itemBuilder: (context, index) {
                 final item = dataIs[index];
-                return Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        widgetIs("name", item.name),
-                        widgetIs("year", item.modelData.year),
-                        widgetIs("price", item.modelData.price),
-                      ],
+                return InkWell(
+                  onTap: (){
+                    context.push('/GetSingleItem',extra: {
+                      "id" : item.id,
+                      "object": categoryName
+                    });
+
+                  },
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              widgetIs("name", item.name),
+                              widgetIs("year", item.modelData.year),
+                              widgetIs("price", item.modelData.price),
+                            ],
+                          ),
+                          Column(
+                              children: [
+                                IconButton(onPressed: (){}, icon: Icon(Icons.edit, color: Colors.blue,)),
+                                IconButton(onPressed: (){
+                                  deleteData(item.id, categoryName);
+                                }, icon: Icon(Icons.delete,color: Colors.red,)),
+                              ],
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -143,7 +181,7 @@ Widget widgetIs(String name , String item){
     spacing: 20,
     children: [
       Text("$name : ",style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.bold),),
-      Expanded(child: Text(item,style: TextStyle(fontWeight: FontWeight.w400),)),
+      Text(item,style: TextStyle(fontWeight: FontWeight.w400),),
     ],
   );
 }
