@@ -29,7 +29,7 @@ class _GetSingleItemState extends State<GetSingleItem> {
     try{
       final linkIs ="${GetSingleData.url(widget.id, widget.object)}";
       final response = await http.get(Uri.parse(linkIs),
-        headers: {"x-api-key": ApiLink.link, "Content-Type": "application/json"},
+        headers: {"x-api-key": ApiKey.key, "Content-Type": "application/json"},
       );
       if(response.statusCode ==200){
         Map<String,dynamic> finalResponse = jsonDecode(response.body);

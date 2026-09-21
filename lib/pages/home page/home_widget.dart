@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:fake_api_demo_app/pages/home%20page/get_single_item.dart';
+import 'package:fake_api_demo_app/pages/home%20page/product_edit_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
@@ -29,24 +29,22 @@ class _HomeWidgetState extends State<HomeWidget> {
   String categoryName = "laptop";
   List<CollectionGetData> dataIs =[];
 
-
   Future<void> deleteData(String id, String obj)async{
     try{
       final link =DeletePost.DltUrl(obj, id);
       final response = await http.delete(Uri.parse(link),
         headers: {
-          "x-api-key": ApiLink.link,
+          "x-api-key": ApiKey.key,
           "Content-Type": "application/json",
         },
       );
       if(response.statusCode==200){
-        print("data can be delete successfully");
+        // print("data can be delete successfully");
         getData();
       }
     }catch(e){
-      print(e);
+      // print(e);
     }
-
   }
 
 
@@ -57,7 +55,7 @@ class _HomeWidgetState extends State<HomeWidget> {
     try{
       final response = await http.get(
         Uri.parse(AddCollection.Login(categoryName)),
-        headers: {"x-api-key": ApiLink.link, "Content-Type": "application/json"},
+        headers: {"x-api-key": ApiKey.key, "Content-Type": "application/json"},
       );
       List newResponse = jsonDecode(response.body);
 
@@ -68,7 +66,7 @@ class _HomeWidgetState extends State<HomeWidget> {
 
 
     }catch(e){
-      print(e);
+      // print(e);
     }
   }
 
@@ -84,11 +82,30 @@ class _HomeWidgetState extends State<HomeWidget> {
     }
   }
 
+
+
+  void dataEdit(CollectionGetData newOne, String category) async{
+    final result = await showModalBottomSheet(
+        isScrollControlled:true,
+        context: context,
+        builder: (context){
+          return ProductEditBottomSheet(dataList: newOne,category: category,);
+        });
+    if(result==true){
+      getData();
+    }
+  }
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
+          // top collections list
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(
@@ -121,7 +138,11 @@ class _HomeWidgetState extends State<HomeWidget> {
           ),
           SizedBox(height: 20,),
 
-          isLoading==true?Expanded(child: Center(child: CircularProgressIndicator(),)):Expanded(
+          isLoading==true?Expanded(
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+          ):Expanded(
             child: ListView.builder(
               itemCount: dataIs.length,
               itemBuilder: (context, index) {
@@ -132,8 +153,8 @@ class _HomeWidgetState extends State<HomeWidget> {
                       "id" : item.id,
                       "object": categoryName
                     });
-
                   },
+
                   child: Card(
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
@@ -150,7 +171,9 @@ class _HomeWidgetState extends State<HomeWidget> {
                           ),
                           Column(
                               children: [
-                                IconButton(onPressed: (){}, icon: Icon(Icons.edit, color: Colors.blue,)),
+                                IconButton(onPressed: (){
+                                  dataEdit(dataIs[index],categoryName);
+                                }, icon: Icon(Icons.edit, color: Colors.blue,)),
                                 IconButton(onPressed: (){
                                   deleteData(item.id, categoryName);
                                 }, icon: Icon(Icons.delete,color: Colors.red,)),

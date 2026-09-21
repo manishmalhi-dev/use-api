@@ -40,6 +40,9 @@ class DeletePost{
 }
 
 
-
-
+class PutData{
+  static String postUrl(String object, String id){
+    return "https://api.restful-api.dev/collections/$object/objects/$id";
+  }
+}
 

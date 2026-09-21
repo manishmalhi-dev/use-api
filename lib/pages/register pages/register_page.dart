@@ -42,12 +42,14 @@ bool isLoading = false;
             "name": nameIs,
           }),
           headers: {
-            "x-api-key": ApiLink.link,
+            "x-api-key": ApiKey.key,
             "Content-Type": "application/json",
           }
       );
       if(response.statusCode==200||response.statusCode==201){
         await pref.setBool("userLogin", true);
+        await pref.setString("userName", emailIs);
+
         setState(() {
           isLoading =false;
         });

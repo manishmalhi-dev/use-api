@@ -1,3 +1,3 @@
-class ApiLink{
-   static const link = "b2f1321e-7602-4d75-86ee-80de8b23f06c";
+class ApiKey{
+   static const key = "a1a1d66d-eddf-4749-816e-073cdc47fafc";
 }

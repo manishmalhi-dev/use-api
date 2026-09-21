@@ -19,6 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
 bool isLoading = false;
+
   Future<void> userLogin() async {
     setState(() {
       isLoading = true;
@@ -30,13 +31,14 @@ bool isLoading = false;
       final response = await http.post(
         Uri.parse(LoginApi.LoginUrl),
         headers: {
-          "x-api-key": ApiLink.link,
+          "x-api-key": ApiKey.key,
           "Content-Type": "application/json",
         },
         body: jsonEncode({"email": email, "password": password}),
       );
       if (response.statusCode == 200) {
         await pref.setBool("userLogin", true);
+        await pref.setString("userName", email);
         setState(() {
           isLoading = false;
         });

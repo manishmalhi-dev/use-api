@@ -41,7 +41,7 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
           }),
           headers: {
             "Content-Type":"application/json",
-            "x-api-key" : ApiLink.link,
+            "x-api-key" : ApiKey.key,
           }
       );
       setState(() {
@@ -206,8 +206,8 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
                       label: Text("Add collection"),
                       icon: Icon(Icons.task),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.yellow,
+                        foregroundColor: Colors.black,
                       ),
                     ),
                   ),
@@ -261,8 +261,8 @@ class _CollectionButtonsState extends State<CollectionButtons> {
           label: Text(collectionName[index]),
           icon: Icon(Icons.work),
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: buttonColor==index ?Colors.blue:Colors.grey
+            foregroundColor:  buttonColor==index ?Colors.black:Colors.white,
+            backgroundColor: buttonColor==index ?Colors.yellow:Colors.grey,
           ),
         );
       }, separatorBuilder: (context,index){
