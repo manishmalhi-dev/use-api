@@ -42,7 +42,9 @@ bool isLoading = false;
         setState(() {
           isLoading = false;
         });
-        context.go('/HomePage');
+        if(mounted){
+          context.go('/HomePage');
+        }
       }
       else{
         setState(() {
@@ -61,10 +63,11 @@ bool isLoading = false;
         );
       }
     } catch (e) {
-      print(e);
+      // print(e);
     }
   }
 
+  bool isPasswordVisible = false;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -119,6 +122,7 @@ bool isLoading = false;
                   ),
                   TextFormField(
                     controller: enterPassword,
+                    obscureText: !isPasswordVisible,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter password';
@@ -133,12 +137,12 @@ bool isLoading = false;
                       hintText: "enter Your Password",
                       label: Text("Enter Password"),
                       suffixIcon: IconButton(
+                        icon: Icon(Icons.remove_red_eye),
                         onPressed: () {
                           setState(() {
-                            enterPassword.clear();
+                            isPasswordVisible =!isPasswordVisible;
                           });
                         },
-                        icon: Icon(Icons.close),
                       ),
                     ),
                   ),

@@ -1,6 +1,6 @@
 import 'package:fake_api_demo_app/pages/home%20page/profile_widget.dart';
 import 'package:flutter/material.dart';
-import 'home_widget.dart';
+import '../home_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -36,8 +36,6 @@ class _HomePageState extends State<HomePage> {
         NavigationDestination(icon: Icon(Icons.home), label: "Home"),
         NavigationDestination(icon: Icon(Icons.person), label: "Profile"),
       ]),
-
-
     );
   }
 }

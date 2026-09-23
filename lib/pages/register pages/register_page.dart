@@ -53,7 +53,9 @@ bool isLoading = false;
         setState(() {
           isLoading =false;
         });
-        context.go('/HomePage');
+        if(mounted){
+          context.go('/HomePage');
+        }
       }
 
       else{
@@ -74,7 +76,7 @@ bool isLoading = false;
       }
     }catch(e){
       setState(() {
-        isLoading =false;
+        isLoading = true;
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -88,9 +90,9 @@ bool isLoading = false;
         ),
       );
     }
-
   }
 
+  bool hidePassword = true;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -170,6 +172,7 @@ bool isLoading = false;
                   ),
                   TextFormField(
                     controller: userPassword,
+                    obscureText: hidePassword,
                     validator: (value){
                       if(value== null||value.isEmpty){
                         return 'Please enter password';
@@ -188,9 +191,9 @@ bool isLoading = false;
                       label: Text("Enter Password"),
                       suffixIcon: IconButton(onPressed: (){
                         setState(() {
-                          userPassword.clear();
+                          hidePassword =!hidePassword;
                         });
-                      }, icon: Icon(Icons.close)),
+                      }, icon: Icon(Icons.remove_red_eye)),
                     ),
                   ),
                   Column(

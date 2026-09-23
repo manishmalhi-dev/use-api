@@ -1,6 +1,6 @@
 import 'package:fake_api_demo_app/pages/flash%20screen/flash_screen.dart';
 import 'package:fake_api_demo_app/pages/home%20page/get_single_item.dart';
-import 'package:fake_api_demo_app/pages/home%20page/home_page.dart';
+import 'package:fake_api_demo_app/pages/home%20page/home/home_page.dart';
 import 'package:fake_api_demo_app/pages/register%20pages/register_page.dart';
 import 'package:go_router/go_router.dart';
 import '../pages/login page/login_page.dart';

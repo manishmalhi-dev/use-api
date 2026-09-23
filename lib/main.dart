@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData(
-        brightness: Brightness.dark,
+        // brightness: Brightness.dark,
         fontFamily: "font2",
       ),
       routerConfig: router,

@@ -10,26 +10,25 @@ class ProfileWidget extends StatefulWidget {
 }
 
 class _ProfileWidgetState extends State<ProfileWidget> {
-
   @override
   void initState() {
     super.initState();
     getUserName();
   }
-  
+
   String? userNameIs;
-  void getUserName()async{
+  void getUserName() async {
     final pref = await SharedPreferences.getInstance();
     setState(() {
-       userNameIs = pref.getString("userName");
+      userNameIs = pref.getString("userName");
     });
   }
-  
-  Future<void> addData() async{
-    final pref =await SharedPreferences.getInstance();
+
+  Future<void> addData() async {
+    final pref = await SharedPreferences.getInstance();
     await pref.setBool('userLogin', false);
     await pref.remove("userName");
-    if(mounted){
+    if (mounted) {
       context.goNamed('LoginPage');
     }
   }
@@ -40,26 +39,43 @@ class _ProfileWidgetState extends State<ProfileWidget> {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          userNameIs==null?Text(""):Card(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Align(
-                      alignment: Alignment.center,
-                      child: Image.asset("assets/images/image02.png",height: 200,)
+          userNameIs == null
+              ? Text("")
+              : Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Image.asset(
+                            "assets/images/image02.png",
+                            height: 200,
+                          ),
+                        ),
+                        Row(
+                          spacing: 20,
+                          children: [
+                            Text(
+                              "Email :",
+                              style: TextStyle(
+                                fontSize: 22,
+                                color: Colors.yellow,
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                userNameIs!,
+                                style: TextStyle(fontSize: 23),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  Row(spacing: 20,
-                    children: [
-                      Text("Email :", style: TextStyle(fontSize: 22, color: Colors.yellow),),
-                      Expanded(child: Text(userNameIs!, style: TextStyle(fontSize: 23),)),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 10,),
+                ),
+          SizedBox(height: 10),
           Card(
             child: ListTile(
               title: Text("connect Us"),
@@ -81,22 +97,25 @@ class _ProfileWidgetState extends State<ProfileWidget> {
               trailing: Icon(Icons.arrow_forward_ios_sharp),
             ),
           ),
-          SizedBox(height: 20,),
+          SizedBox(height: 20),
           InkWell(
-            onTap: (){
+            onTap: () {
               addData();
             },
             child: SizedBox(
               width: 200,
               child: Card(
                 child: ListTile(
-                  title: Text("Logout",style: TextStyle(color:Colors.red),),
-                  leading: Icon(Icons.logout,color: Colors.red,),
-                  trailing: Icon(Icons.arrow_forward_ios_sharp,color: Colors.red,),
+                  title: Text("Logout", style: TextStyle(color: Colors.red)),
+                  leading: Icon(Icons.logout, color: Colors.red),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios_sharp,
+                    color: Colors.red,
+                  ),
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

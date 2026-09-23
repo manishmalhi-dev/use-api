@@ -11,7 +11,8 @@ class CollectionGetData {
   });
 
   factory CollectionGetData.fromJson(Map<String, dynamic> json) {
-    return (CollectionGetData(
+    return (
+        CollectionGetData(
       id: json["id"],
       name: json["name"],
       modelData: Data.fromJson(json["data"]),

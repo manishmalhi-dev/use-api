@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import '../../api links/api_key.dart';
 import '../../api links/api_link.dart';
-import '../../model class/collection_get_data.dart';
+import '../../model class/collection_data_model.dart';
 import 'home_bottom_sheet.dart';
 
 class HomeWidget extends StatefulWidget {
@@ -16,96 +16,119 @@ class HomeWidget extends StatefulWidget {
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
-
   @override
   void initState() {
     super.initState();
     getData();
   }
 
-  int colorIndex =0;
+  int colorIndex = 0;
   bool isLoading = false;
   List<String> name = ["laptop", "phone", "tablet"];
   String categoryName = "laptop";
-  List<CollectionGetData> dataIs =[];
+  List<CollectionGetData> dataIs = [];
 
-  Future<void> deleteData(String id, String obj)async{
-    try{
-      final link =DeletePost.DltUrl(obj, id);
-      final response = await http.delete(Uri.parse(link),
-        headers: {
-          "x-api-key": ApiKey.key,
-          "Content-Type": "application/json",
-        },
+  Future<void> deleteData(String id, String obj) async {
+    try {
+      final link = DeletePost.DltUrl(obj, id);
+      final response = await http.delete(
+        Uri.parse(link),
+        headers: {"x-api-key": ApiKey.key, "Content-Type": "application/json"},
       );
-      if(response.statusCode==200){
-        // print("data can be delete successfully");
+      if (response.statusCode == 200) {
         getData();
       }
-    }catch(e){
+    } catch (e) {
       // print(e);
     }
   }
 
-
+  List<Map<String, dynamic>> testModel = [];
   Future<void> getData() async {
     setState(() {
       isLoading = true;
     });
-    try{
+    try {
       final response = await http.get(
         Uri.parse(AddCollection.Login(categoryName)),
         headers: {"x-api-key": ApiKey.key, "Content-Type": "application/json"},
       );
-      List newResponse = jsonDecode(response.body);
-
-      setState(() {
-        dataIs = newResponse.map((item)=> CollectionGetData.fromJson(item)).toList();
-        isLoading = false;
-      });
-
-
-    }catch(e){
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        List newResponse = jsonDecode(response.body);
+        setState(() {
+          dataIs = newResponse
+              .map((item) => CollectionGetData.fromJson(item))
+              .toList();
+        });
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
       // print(e);
     }
   }
 
-  void floatingButton() async{
+  void floatingButton() async {
     final result = await showModalBottomSheet(
-        isScrollControlled:true,
-        context: context,
-        builder: (context){
-          return HomeBottomSheet();
-        });
-    if(result==true){
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return HomeBottomSheet(selectedCategory: categoryName);
+      },
+    );
+    if (result == true) {
       getData();
     }
   }
 
-
-
-  void dataEdit(CollectionGetData newOne, String category) async{
+  void dataEdit(CollectionGetData newOne, String category) async {
     final result = await showModalBottomSheet(
-        isScrollControlled:true,
-        context: context,
-        builder: (context){
-          return ProductEditBottomSheet(dataList: newOne,category: category,);
-        });
-    if(result==true){
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return ProductEditBottomSheet(dataList: newOne, category: category);
+      },
+    );
+    if (result == true) {
       getData();
     }
   }
 
-
-
-
+  String selected = "List";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          // top collections list
+          SegmentedButton<String>(
+            selected: {selected},
+            onSelectionChanged: (Set<String> value) {
+              setState(() {
+                selected = value.first;
+              });
+            },
+            segments: const [
+              ButtonSegment<String>(
+                value: "laptop",
+                label: Text("Laptops"),
+                icon: Icon(Icons.laptop),
+              ),
+
+              ButtonSegment<String>(
+                value: "phone",
+                label: Text("Phones"),
+                icon: Icon(Icons.phone_android),
+              ),
+              ButtonSegment(
+                value: "tablet",
+                label: Text("tablets"),
+                icon: Icon(Icons.tablet_android),
+              ),
+            ],
+          ),
+
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(
@@ -117,11 +140,17 @@ class _HomeWidgetState extends State<HomeWidget> {
                 scrollDirection: Axis.horizontal,
                 itemCount: name.length,
                 itemBuilder: (context, index) {
-                  return ElevatedButton(
+                  return ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      backgroundColor: colorIndex==index?Colors.yellow :null,
-                      foregroundColor: colorIndex==index?Colors.black :null,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      backgroundColor: colorIndex == index
+                          ? Colors.yellow
+                          : null,
+                      foregroundColor: colorIndex == index
+                          ? Colors.black
+                          : null,
                     ),
                     onPressed: () {
                       setState(() {
@@ -130,81 +159,129 @@ class _HomeWidgetState extends State<HomeWidget> {
                         getData();
                       });
                     },
-                    child: Text(name[index]),
+                    label: Text(name[index]),
+                    icon: colorIndex == index ? Icon(Icons.check) : null,
                   );
                 },
               ),
             ),
           ),
-          SizedBox(height: 20,),
+          SizedBox(height: 20),
 
-          isLoading==true?Expanded(
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-          ):Expanded(
-            child: ListView.builder(
-              itemCount: dataIs.length,
-              itemBuilder: (context, index) {
-                final item = dataIs[index];
-                return InkWell(
-                  onTap: (){
-                    context.push('/GetSingleItem',extra: {
-                      "id" : item.id,
-                      "object": categoryName
-                    });
-                  },
+          isLoading == true
+              ? Expanded(child: Center(child: CircularProgressIndicator()))
+              : Expanded(
+                  child: ListView.builder(
+                    itemCount: dataIs.length,
+                    itemBuilder: (context, index) {
+                      final item = dataIs[index];
+                      return InkWell(
+                        onTap: () {
+                          context.push(
+                            '/GetSingleItem',
+                            extra: {"id": item.id, "object": categoryName},
+                          );
+                        },
 
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              widgetIs("name", item.name),
-                              widgetIs("year", item.modelData.year),
-                              widgetIs("price", item.modelData.price),
-                            ],
-                          ),
-                          Column(
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                IconButton(onPressed: (){
-                                  dataEdit(dataIs[index],categoryName);
-                                }, icon: Icon(Icons.edit, color: Colors.blue,)),
-                                IconButton(onPressed: (){
-                                  deleteData(item.id, categoryName);
-                                }, icon: Icon(Icons.delete,color: Colors.red,)),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    widgetIs("name", item.name),
+                                    widgetIs("year", item.modelData.year),
+                                    widgetIs("price", item.modelData.price),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        dataEdit(dataIs[index], categoryName);
+                                      },
+                                      icon: Icon(
+                                        Icons.edit,
+                                        color: Colors.blue,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: const Text("Delete Item"),
+                                              content: const Text(
+                                                "Are you sure you want to delete this item?",
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(
+                                                      context,
+                                                    ); // Close alert
+                                                  },
+                                                  child: const Text("Cancel"),
+                                                ),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    deleteData(
+                                                      item.id,
+                                                      categoryName,
+                                                    );
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text("Delete"),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                      icon: Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
-                        ],
-                      ),
-                    ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
-          ),
+                ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: (){
-            floatingButton();
-          }),
+        child: Icon(Icons.add),
+        onPressed: () {
+          floatingButton();
+        },
+      ),
     );
   }
 }
 
-
-Widget widgetIs(String name , String item){
+Widget widgetIs(String name, String item) {
   return Row(
     spacing: 20,
     children: [
-      Text("$name : ",style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.bold),),
-      Text(item,style: TextStyle(fontWeight: FontWeight.w400),),
+      Text(
+        "$name : ",
+        style: TextStyle(
+          color: Colors.blue,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      Text(item, style: TextStyle(fontWeight: FontWeight.w400)),
     ],
   );
 }
