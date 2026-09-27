@@ -1,35 +1,34 @@
 
 class CollectionGetData {
   String id;
-  String name;
+  String taskName;
   final Data modelData;
 
   CollectionGetData({
     required this.id,
-    required this.name,
+    required this.taskName,
     required this.modelData,
   });
 
   factory CollectionGetData.fromJson(Map<String, dynamic> json) {
-    return (
-        CollectionGetData(
+    return (CollectionGetData(
       id: json["id"],
-      name: json["name"],
+      taskName: json["name"],
       modelData: Data.fromJson(json["data"]),
     ));
   }
 }
 
 class Data {
-  String year;
-  String price;
+  String date;
+  String optionalNotes;
 
-  Data({required this.year, required this.price});
+  Data({required this.date, required this.optionalNotes});
 
   factory Data.fromJson(Map<String, dynamic> json) {
     return (Data(
-        year: json["year"],
-        price: json["price"])
+        date: json["year"],
+        optionalNotes: json["price"])
     );
   }
 }

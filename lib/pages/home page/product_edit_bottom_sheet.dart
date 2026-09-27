@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:fake_api_demo_app/api%20links/api_key.dart';
 import 'package:fake_api_demo_app/api%20links/api_link.dart';
 import 'package:flutter/material.dart';
@@ -33,9 +32,9 @@ class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
 
   Future<void> addTextFieldData() async {
     setState(() {
-      changeName.text = widget.dataList.name;
-      changePrice.text = widget.dataList.modelData.price;
-      changeYear.text = widget.dataList.modelData.year;
+      changeName.text = widget.dataList.taskName;
+      changePrice.text = widget.dataList.modelData.date;
+      changeYear.text = widget.dataList.modelData.optionalNotes;
     });
   }
 
@@ -71,6 +70,21 @@ class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
     }
   }
 
+
+  Future<void> dataPicker()async{
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (pickedDate != null) {
+      setState(() {
+        changeYear.text = "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return isLoading == true
@@ -100,7 +114,7 @@ class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Edit Categories",
+                            "Edit Task",
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
@@ -119,7 +133,7 @@ class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Collections",
+                            "Category",
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
@@ -151,20 +165,16 @@ class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
                       ),
 
                       SizedBox(height: 10),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text("Name", style: TextStyle(fontSize: 16)),
-                      ),
                       TextFormField(
                         controller: changeName,
                         validator: ((value) {
                           if (value == null || value.isEmpty) {
-                            return "please enter name";
+                            return "Enter Task";
                           }
                           return null;
                         }),
                         decoration: InputDecoration(
-                          hintText: "Product name ",
+                          hintText: "Enter Task",
                           prefixIcon: Icon(Icons.note_add_sharp),
                           suffixIcon: IconButton(
                             onPressed: () {},
@@ -182,25 +192,24 @@ class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
                       SizedBox(height: 10),
                       Align(
                         alignment: Alignment.topLeft,
-                        child: Text("Price", style: TextStyle(fontSize: 16)),
+                        child: Text("Due Date", style: TextStyle(fontSize: 16)),
                       ),
                       TextFormField(
-                        controller: changePrice,
-                        validator: ((value) {
+                        controller: changeYear,
+                        validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "please enter price";
+                            return "Please select date";
                           }
                           return null;
-                        }),
+                        },
+                        onTap: (){
+                          dataPicker();
+                        },
                         decoration: InputDecoration(
-                          hintText: "Product price ",
-                          prefixIcon: Icon(Icons.note_add_sharp),
-                          suffixIcon: IconButton(
-                            onPressed: () {},
-                            icon: Icon(Icons.close),
-                          ),
+                          hintText: "Select date",
+                          prefixIcon: const Icon(Icons.calendar_month),
                           border: OutlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Colors.grey,
                               width: 2,
                             ),
@@ -213,21 +222,20 @@ class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
                         alignment: Alignment.topLeft,
                         child: Text("Year", style: TextStyle(fontSize: 18)),
                       ),
+
+
                       TextFormField(
-                        controller: changeYear,
+                        controller: changePrice,
+                        maxLines: 2,
                         validator: ((value) {
                           if (value == null || value.isEmpty) {
-                            return "please enter year";
+                            return "please enter price";
                           }
                           return null;
                         }),
                         decoration: InputDecoration(
-                          hintText: "Product year ",
+                          hintText: "Product price ",
                           prefixIcon: Icon(Icons.note_add_sharp),
-                          suffixIcon: IconButton(
-                            onPressed: () {},
-                            icon: Icon(Icons.close),
-                          ),
                           border: OutlineInputBorder(
                             borderSide: BorderSide(
                               color: Colors.grey,
@@ -248,7 +256,7 @@ class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
                               saveData();
                             }
                           },
-                          label: Text("Save Data"),
+                          label: Text("Save Task"),
                           icon: Icon(Icons.task),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.yellow,

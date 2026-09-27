@@ -38,8 +38,8 @@ class _FlashScreenState extends State<FlashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           spacing: 30,
           children: [
-            Image.asset('assets/images/image01.png'),
-            Text("Welcome API's",style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, fontFamily: 'font1'),),
+            Image.asset('assets/images/image01.webp'),
+            Text("Welcome Task Flow App",style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, fontFamily: 'font1'),),
             CircularProgressIndicator()
           ],
         ),

@@ -1,5 +1,7 @@
 import 'package:fake_api_demo_app/pages/home%20page/profile_widget.dart';
+import 'package:fake_api_demo_app/provider/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../home_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,8 +23,13 @@ class _HomePageState extends State<HomePage> {
           title: Text("Home Page",style: TextStyle(fontWeight: FontWeight.bold),),
           backgroundColor: Colors.yellow,
         foregroundColor: Colors.black,
+        actions: [
+          IconButton(onPressed: (){
+            context.read<SetTheme>().themeSet();
+          }, icon: Icon(Icons.sunny)),
+        ],
       ),
-      drawer: Drawer(),
+      // drawer: Drawer(),
       body: pages[selected],
 
       bottomNavigationBar: NavigationBar(

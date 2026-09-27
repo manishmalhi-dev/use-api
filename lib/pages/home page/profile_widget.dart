@@ -50,17 +50,17 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                           alignment: Alignment.center,
                           child: Image.asset(
                             "assets/images/image02.png",
-                            height: 200,
+                            height: 150,
                           ),
                         ),
                         Row(
-                          spacing: 20,
+                          spacing: 15,
                           children: [
                             Text(
                               "Email :",
                               style: TextStyle(
                                 fontSize: 22,
-                                color: Colors.yellow,
+                                color: Colors.blue,
                               ),
                             ),
                             Expanded(

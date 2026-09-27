@@ -26,14 +26,17 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
     super.initState();
     setState(() {
       collectionsName = widget.selectedCategory;
+      final today = DateTime.now();
+      price.text = "${today.day}/${today.month}/${today.year}";
     });
   }
 
-  List<String> buttonSelected = ["laptop", "phone", "tablet"];
+  List<String> buttonSelected = ["Work", "Personal", "Study"];
+  List<Icon> categoryIcons =[Icon(Icons.work), Icon(Icons.person), Icon(Icons.school)];
   Future<void> postData() async {
     String finalName = name.text.trim();
     String finalPrice = price.text.trim();
-    String finalYear = year.text.trim();
+    String finalYear = year.text.trim()??" ";
 
     try {
       setState(() {
@@ -55,7 +58,11 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
         price.clear();
         year.clear();
         if (mounted) {
-          Navigator.pop(context, true);
+          // Navigator.pop(context, true,);
+          Navigator.pop(context, {
+            "confirm": true,
+            "category": collectionsName,
+          },);
         }
       } else {}
     } catch (e) {
@@ -64,6 +71,20 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
   }
 
   bool isLoading = false;
+
+  Future<void> dataPicker()async{
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (pickedDate != null) {
+      setState(() {
+        price.text = "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +116,7 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Add Categories",
+                              "Add Task",
                               style: TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
@@ -113,7 +134,7 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
                         Align(
                           alignment: Alignment.topLeft,
                           child: Text(
-                            "Collections",
+                            "Category",
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w500,
@@ -132,17 +153,18 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
                                     collectionsName = buttonSelected[index];
                                   });
                                 },
-                                label: Text(buttonSelected[index]),
-                                icon: Icon(Icons.work),
+                                label: Row(
+                                  children: [
+                                    Text(buttonSelected[index]),
+                                    SizedBox(width: 7,),
+                                   categoryIcons[index],
+                                  ],
+                                ),
+                                icon: collectionsName == buttonSelected[index]?Icon(Icons.check):null,
                                 style: ElevatedButton.styleFrom(
-                                  foregroundColor:
-                                      collectionsName == buttonSelected[index]
-                                      ? Colors.black
-                                      : Colors.white,
-                                  backgroundColor:
-                                      collectionsName == buttonSelected[index]
-                                      ? Colors.yellow
-                                      : Colors.grey,
+                                  minimumSize: Size(100, 50),
+                                  foregroundColor: collectionsName == buttonSelected[index] ? Colors.black : Colors.white,
+                                  backgroundColor: collectionsName == buttonSelected[index] ? Colors.yellow : Colors.grey,
                                 ),
                               );
                             },
@@ -154,10 +176,6 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
                         ),
 
                         SizedBox(height: 10),
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Text("Name", style: TextStyle(fontSize: 16)),
-                        ),
                         TextFormField(
                           controller: name,
                           validator: ((value) {
@@ -167,8 +185,8 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
                             return null;
                           }),
                           decoration: InputDecoration(
-                            hintText: "Product name ",
-                            prefixIcon: Icon(Icons.note_add_sharp),
+                            hintText: "What needs to be done?",
+                            prefixIcon: Icon(Icons.task),
                             suffixIcon: IconButton(
                               onPressed: () {},
                               icon: Icon(Icons.close),
@@ -185,25 +203,33 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
                         SizedBox(height: 10),
                         Align(
                           alignment: Alignment.topLeft,
-                          child: Text("Price", style: TextStyle(fontSize: 16)),
+                          child: Text("Due Date", style: TextStyle(fontSize: 16)),
                         ),
+
+
                         TextFormField(
                           controller: price,
-                          validator: ((value) {
+                          readOnly: true,
+                          onTap: () async {
+                            dataPicker();
+                          },
+                          validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return "please enter price";
+                              return "Please select date";
                             }
                             return null;
-                          }),
+                          },
                           decoration: InputDecoration(
-                            hintText: "Product price ",
-                            prefixIcon: Icon(Icons.note_add_sharp),
+                            hintText: "Select date",
+                            prefixIcon: const Icon(Icons.calendar_month),
                             suffixIcon: IconButton(
-                              onPressed: () {},
-                              icon: Icon(Icons.close),
+                              onPressed: () {
+                                price.clear();
+                              },
+                              icon: const Icon(Icons.close),
                             ),
                             border: OutlineInputBorder(
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                 color: Colors.grey,
                                 width: 2,
                               ),
@@ -211,26 +237,18 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
                             ),
                           ),
                         ),
+
+
                         SizedBox(height: 10),
                         Align(
                           alignment: Alignment.topLeft,
-                          child: Text("Year", style: TextStyle(fontSize: 18)),
+                          child: Text("Add Note", style: TextStyle(fontSize: 18)),
                         ),
                         TextFormField(
+                          maxLines: 2,
                           controller: year,
-                          validator: ((value) {
-                            if (value == null || value.isEmpty) {
-                              return "please enter year";
-                            }
-                            return null;
-                          }),
                           decoration: InputDecoration(
-                            hintText: "Product year ",
-                            prefixIcon: Icon(Icons.note_add_sharp),
-                            suffixIcon: IconButton(
-                              onPressed: () {},
-                              icon: Icon(Icons.close),
-                            ),
+                            hintText: "Add Note (Optional)",
                             border: OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.grey,
@@ -251,7 +269,7 @@ class _HomeBottomSheetState extends State<HomeBottomSheet> {
                                 postData();
                               }
                             },
-                            label: Text("Add collection"),
+                            label: Text("Add Task"),
                             icon: Icon(Icons.task),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.yellow,
