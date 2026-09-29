@@ -154,8 +154,6 @@ class _HomeWidgetState extends State<HomeWidget> {
                   );
                 },
               ),
-
-
             ),
           ),
           SizedBox(height: 20),
@@ -164,7 +162,6 @@ class _HomeWidgetState extends State<HomeWidget> {
               ? Expanded(child: Center(child: CircularProgressIndicator()))
               : Expanded(
                   child: ListView.builder(
-                    // key: ValueKey(categoryName),
                     itemCount: dataIs.length,
                     itemBuilder: (context, index) {
                       final item = dataIs[index];
