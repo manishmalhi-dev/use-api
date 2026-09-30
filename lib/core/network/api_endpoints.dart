@@ -12,9 +12,5 @@ class ApiEndpoints {
   static String modifyObjectData(String id, String object){
     return "/collections/$object/objects/$id";
   }
-
-
-
-  static const String users = '/users';
-  static const String posts = '/posts';
+  
 }

@@ -1,7 +1,7 @@
-import 'package:fake_api_demo_app/model%20class/user.dart';
 
 import '../core/network/api_endpoints.dart';
 import '../core/network/api_service.dart';
+import '../models/user.dart';
 
 class AuthRepositary {
   final ApiService apiService;
@@ -19,10 +19,8 @@ class AuthRepositary {
         'password': password,
       },
     );
-    return UserModel.fromJson(response.data);
+      return UserModel.fromJson(response.data);
   }
-
-
 // Future<List<UserModel>> getUsers() async {
 //     final response = await apiService.get(
 //       ApiEndpoints.users,

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../api links/api_key.dart';
 import '../../api links/api_link.dart';
-import '../../model class/collection_data_model.dart';
+import '../../models/collection_data_model.dart';
 import 'home_bottom_sheet.dart';
 
 class HomeWidget extends StatefulWidget {

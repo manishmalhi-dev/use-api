@@ -21,7 +21,6 @@ class ApiService {
         },
       ),
     );
-
     _setupInterceptors();
   }
 
@@ -32,18 +31,14 @@ class ApiService {
           print(
             'REQUEST: ${options.method} ${options.uri} ${options.data}',
           );
-
           handler.next(options);
         },
-
         onResponse: (response, handler) {
           print(
             'RESPONSE: ${response.statusCode} ${response.requestOptions.uri}  ${response.data}',
           );
-
           handler.next(response);
         },
-
         onError: (error, handler) {
           print(
             'ERROR: ${error.requestOptions.uri}',
@@ -94,7 +89,6 @@ class ApiService {
         queryParameters: queryParameters,
         options: options,
       );
-
       return response;
     } on DioException catch (e) {
       throw _handleDioException(e);

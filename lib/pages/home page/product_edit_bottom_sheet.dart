@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'package:fake_api_demo_app/api%20links/api_key.dart';
 import 'package:fake_api_demo_app/api%20links/api_link.dart';
 import 'package:flutter/material.dart';
-import '../../model class/collection_data_model.dart';
 import 'package:http/http.dart' as http;
+
+import '../../models/collection_data_model.dart';
 
 class ProductEditBottomSheet extends StatefulWidget {
   final CollectionGetData dataList;

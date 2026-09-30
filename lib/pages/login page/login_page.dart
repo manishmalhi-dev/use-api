@@ -1,12 +1,8 @@
-import 'dart:convert';
-import 'package:fake_api_demo_app/api%20links/api_key.dart';
 import 'package:fake_api_demo_app/core/network/api_service.dart';
 import 'package:fake_api_demo_app/repositary/auth_repositary.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../api links/api_link.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -25,7 +21,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-
     authRepository = AuthRepositary(
       ApiService(),
     );
@@ -36,9 +31,7 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       isLoading = true;
     });
-
     final pref = await SharedPreferences.getInstance();
-
     try {
       final user = await authRepository.login(
         email: enteredEmail.text.trim(),
@@ -49,10 +42,10 @@ class _LoginPageState extends State<LoginPage> {
       await pref.setString("userName", user.name);
       await pref.setString("userEmail", user.email);
       await pref.setInt("userId", user.id);
+
       setState(() {
         isLoading = false;
       });
-
       if (mounted) {
         context.go('/HomePage');
       }
@@ -60,9 +53,7 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         isLoading = false;
       });
-
       if (!mounted) return;
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -78,53 +69,6 @@ class _LoginPageState extends State<LoginPage> {
       );
     }
   }
-  // Future<void> userLogin() async {
-  //   setState(() {
-  //     isLoading = true;
-  //   });
-  //   final pref = await SharedPreferences.getInstance();
-  //   String email = enteredEmail.text.trim();
-  //   String password = enterPassword.text.trim();
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse(LoginApi.LoginUrl),
-  //       headers: {
-  //         "x-api-key": ApiKey.key,
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: jsonEncode({"email": email, "password": password}),
-  //     );
-  //     if (response.statusCode == 200) {
-  //       print(response.body);
-  //       await pref.setBool("userLogin", true);
-  //       await pref.setString("userName", email);
-  //       setState(() {
-  //         isLoading = false;
-  //       });
-  //       if(mounted){
-  //         context.go('/HomePage');
-  //       }
-  //     }
-  //     else{
-  //       setState(() {
-  //         isLoading=false;
-  //       });
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //           content: const Text("Wrong email or password"),
-  //           behavior: SnackBarBehavior.floating,
-  //           margin: EdgeInsets.only(
-  //             bottom: MediaQuery.of(context).size.height - 100,
-  //             left: 20,
-  //             right: 20,
-  //           ),
-  //         ),
-  //       );
-  //     }
-  //   } catch (e) {
-  //     // print(e);
-  //   }
-  // }
 
   bool isPasswordVisible = false;
   @override
